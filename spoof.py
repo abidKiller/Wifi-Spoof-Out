@@ -23,11 +23,11 @@ class Spoof:
         self.packet=self.ether/self.arp
         sendp(x=self.packet,verbose=False)
 
-    def sendPacket(self,targetsIp,targetMac):
+    def send_packet(self,targetsIp,targetMac):
 
         self.arp.dst=self.targetMac
         self.broadcast()
 
 if __name__ == "__main__":
     spoof=Spoof('','')
-    spoof.sendPacket('','')
+    spoof.send_packet('','')
