@@ -7,9 +7,14 @@ import traceback
 import threading
 import optparse
 from time import sleep
+from printUtils import PrintUtils
 from printUtils import Color
+
+
 from colorama import init
-from printUtils import heading
+from scanner import Scanner
+from spoof import Spoof
+from network import Network
 
 try:
     if os.geteuid()!=0 :
@@ -19,22 +24,29 @@ except:
     pass #for windows
 
 
+def one_spoof():
+    pass
+def multiple_spoof():
+    pass
+def all_spoof():
+    pass
+
+def main_loop():
+    pass
+def one_limit():
+    pass
 
 if __name__ == "__main__":
-
+    
     init()
+    PrintUtils.heading()
+    PrintUtils.menu()
+    main_loop()
+    PrintUtils.scanning_animation(PrintUtils,'scan')
     
 
-   
-    heading()
-    print('\nChoose an option from the menu:\n')
-    
-    print('\t\t{}[{}O{}]{} Spoof out {}ONE{} device'.format(Color.YELLOW,Color. RED, Color.YELLOW,Color. WHITE,Color.GREEN,Color.WHITE))
-    
-    print('\t\t{}[{}M{}]{} Spoof out {}MULTIPLE{} devices'.format(Color.YELLOW,Color. RED, Color.YELLOW,Color. WHITE,Color.GREEN,Color.WHITE))
-    
-    print('\t\t{}[{}A{}]{} Spoof Out {}ALL{} devices'.format(Color.YELLOW,Color. RED,Color. YELLOW,Color. WHITE,Color.GREEN,Color.WHITE))
 
-    print('\t\t{}[{}L{}]{} Spoof Out {}Limit ONE{} device'.format(Color.YELLOW,Color. RED,Color. YELLOW,Color. WHITE,Color.GREEN,Color.WHITE))
 
-    print('\n\t\t{}[{}E{}]{} Exit\n'.format(Color.YELLOW, Color.RED, Color.YELLOW, Color.WHITE))
+
+
+
