@@ -2,26 +2,35 @@ from urllib.request import urlopen,Request
 from urllib.error import URLError
 import scapy.all
 from scapy.all import ARP,ICMP,IP,sr1
-import math
+from scanner import Scanner
+from scapy.arch import get_if_hwaddr
 from printUtils import Color
+import math
 
 class Network:
     def __init__(self):
         self.online_IPs=None
-        self.default_gateway = None
+        self.default_interface=self.get_default_interface()
+        self.default_gateway_IP= self.get_gateway_IP()
         self.default_getway_mac_set=None
-        
+        self.default_interface_mac=self.get_default_interface_mac()
+        scanner=Scanner()
+        self.host_list=None
+        self.vendors=None
 
-    def resolve_mac(mac):
+    def resolve_mac(self):
         try:
             # send request to macvendors.co
-            url = "http://macvendors.co/api/vendorname/"
-            request = Request(url + mac, headers={'User-Agent': "API Browser"})
-            response = urlopen(request)
-            vendor = response.read()
-            vendor = vendor.decode("utf-8")
-            vendor = vendor[:25]
-            return vendor
+            for host in self.host_list: 
+                url = "http://macvendors.co/api/vendorname/"
+                request = Request(url +self.host_list[1], headers={'User-Agent': "API Browser"})
+                response = urlopen(request)
+                vendor = response.read()
+                vendor = vendor.decode("utf-8")
+                vendor = vendor[:25]
+                self.vendors.append(vendor)
+            return self.vendors
+
         except KeyboardInterrupt:
             exit()
         except:
@@ -30,7 +39,7 @@ class Network:
         try:
             urlopen('https://github.com',timeout=3)
             return True
-        except Urlerror as e:
+        except URLError as e:
             return False
     def get_default_interface(self):
         def long2net(arg):
@@ -44,7 +53,7 @@ class Network:
             if netmask < 16:
                 return None
             return net
-        for network,net_mask,interface,address,_ in scapy.config.conf.route.routes:
+        for network,net_mask,_,interface,address,_ in scapy.config.conf.route.routes:
             if network==0 or interface=='lo' or address=='127.0.0.1' or address=='0.0.0.0':
                 continue
             if net_mask < 0 or net_mask == 0xFFFFFFFF:
@@ -56,15 +65,25 @@ class Network:
                 return interface
 
     def get_default_interface_mac(self):
-        pass
+        try:
+            self.default_interface=self.get_default_interface()
+            self.default_interface_mac= get_if_hwaddr(self.default_interface)
+        except :
+            print('\n{}ERROR :{}Could not Obtain {}Default interface MAC address \n'.format(Color.RED,Color.YELLOW,Color.BLUE))
+            print('{}ENTER MANUALLY ({}e.g. MM:MM:MM:SS:SS:SS): '.format(Color.YELLOW,Color.GREEN))
+            self.default_gateway_mac=input()
+            self.default_gateway_mac_set=True
+        
+        return self.default_interface_mac
+
 
     def get_gateway_IP(self):
         try:
             gateway_packet=sr1(IP(dst="google.com",ttl=0)/ICMP()/ "XXXXXXXXXXX", verbose=False)
             return gateway_packet.src
         except:
-            print("\n{0}ERROR: Gateway IP could not be obtained. Please enter IP manually.{1}\n".format(Color.RED, Color.END))
-            header = ('{}Enter Gateway IP {}(e.g. 192.168.0.8): '.format(Color.YELLOW,Color.GREEN,Color.END))
+            print("\n{}ERROR:{}Could not obtain Gateway IP\n".format(Color.RED, Color.END))
+            header = ('{}ENTER MANUALLY {}(e.g. 192.168.0.8): '.format(Color.YELLOW,Color.GREEN))
             gateway_ip=input(header)
             return gateway_ip
             
@@ -79,10 +98,16 @@ class Network:
             if not self.default_gateway_mac_set:
                 if host[0] == self.default_gateway_IPs:
                     self.default_gateway_mac=host[1]
+        if not self.default_gateway_mac_set and self.default_gateway_mac==0:
+            print('\n{}ERROR :{}Could not Obtain {}gateway MAC address \n'.format(Color.RED,Color.YELLOW,Color.BLUE))
+            print('{}ENTER MANUALLY ({}e.g. MM:MM:MM:SS:SS:SS): \r'.format(Color.YELLOW,Color.GREEN))
+            self.default_gateway_mac=input()
+            self.default_gateway_mac_set=True
                     
+if __name__ == '__main__':
+    net=Network()
+    print(net.default_gateway_IP)
 
-
-   
 
 
 

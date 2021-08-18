@@ -1,4 +1,5 @@
-'''
+
+
 from __future__ import absolute_import, division, print_function
 import logging
 import scapy.config
@@ -10,8 +11,10 @@ import errno
 import os
 import getopt
 import sys
-
-logging.basicConfig(format='%(asctime)s %(levelname)-5s %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
+from scapy.all import *
+from scapy.all import ICMP,IP,ARP,Ether
+from printUtils import Color
+'''
 logger = logging.getLogger(__name__)
 
 
@@ -23,9 +26,9 @@ def long2net(arg):
 
 def to_CIDR_notation(bytes_network, bytes_netmask):
     network = scapy.utils.ltoa(bytes_network)
-    print("in cider"+str(network))
+  
     netmask = long2net(bytes_netmask)
-    print(netmask)
+    
     net = "%s/%s" % (network, netmask)
     if netmask < 16:
         logger.warning("%s is too big. skipping" % net)
@@ -35,17 +38,19 @@ def to_CIDR_notation(bytes_network, bytes_netmask):
 
 
 def scan_and_print_neighbors(net, interface, timeout=5):
-    logger.info("arping %s on %s" % (net, interface))
+    #logger.info("arping %s on %s" % (net, interface))
     try:
         ans, unans = scapy.layers.l2.arping(net, iface=interface, timeout=timeout, verbose=True)
         for s, r in ans.res:
             line = r.sprintf("%Ether.src%  %ARP.psrc%")
+          
             try:
                 hostname = socket.gethostbyaddr(r.psrc)
                 line += " " + hostname[0]
             except socket.herror:
                 # failed to resolve
                 pass
+            
             logger.info(line)
     except socket.error as e:
         if e.errno == errno.EPERM:     # Operation not permitted
@@ -71,10 +76,9 @@ def main(interface_to_scan=None):
 
         # skip docker interface
         if interface != interface_to_scan and interface.startswith('docker') or interface.startswith('br-'):
-            logger.warning("Skipping interface '%s'" % interface)
+            #logger.warning("Skipping interface '%s'" % interface)
             continue
-        print(network)
-        print(netmask)
+    
         net = to_CIDR_notation(network, netmask)
 
         if net:
@@ -105,7 +109,7 @@ if __name__ == "__main__":
             assert False, 'unhandled option'
 
     main(interface_to_scan=interface)
-'''
+
 import time
 import sys
 from printUtils import Color
@@ -117,8 +121,8 @@ print("Loading:")
 
 #animation = ["10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"]
 animation = ["■ □ □ □ □ □ □ □ □ □ □ □ □","■ ■ □ □ □ □ □ □ □ □ □ □ □", "■ ■ ■ □ □ □ □ □ □ □ □ □ □", "■ ■ ■ ■ □ □ □ □ □ □ □ □ □", "■ ■ ■ ■ ■ □ □ □ □ □ □ □ □", "■ ■ ■ ■ ■ ■ □ □ □ □ □ □ □", "■ ■ ■ ■ ■ ■ ■ □ □ □ □ □ □", "■ ■ ■ ■ ■ ■ ■ ■ □ □ □ □ □", "■ ■ ■ ■ ■ ■ ■ ■ ■ □ □ □ □","■ ■ ■ ■ ■ ■ ■ ■ ■ ■ □ □ □","■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ □ □","■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ □","■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■"]
-print("hi")
-init()
+
+
 cursor.hide()
 for i in range(len(animation)):
     time.sleep(0.2)
@@ -128,3 +132,37 @@ for i in range(len(animation)):
 
 
 sys.stdout.write("\x1b[1A\x1b[2K")
+
+class lol:
+    def __init__(self):
+        self.ho=self.method()
+    def method(self):
+        return 'hello'
+
+    
+
+x=lol()
+print(x.ho)
+
+def getGatewayIP():
+    try:
+        getGateway_p = sr1(IP(dst="google.com", ttl=0) / ICMP() / "XXXXXXXXXXX", verbose=False)
+        return getGateway_p.src
+    except:
+        print("\n{0}ERROR: Gateway IP could not be obtained. Please enter IP manually.{1}\n").format(RED, END)
+        header = ('{0}kickthemout{1}> {2}Enter Gateway IP {3}(e.g. 192.168.1.1): '.format(BLUE, WHITE, RED, END))
+        gatewayIP = input(header)
+        return gatewayIP
+print(getGatewayIP())
+'''
+online_ips=['192.184.24.4']
+host_list=['MM:MM:MM:SS:SS:SS']
+vendors = ['samsung r&d mobiles']
+print('{}             IP                      MAC                     VENDOR'.format(Color.BLUE,Color.END))
+print('    __________________________________________________________________________\n')
+i=0
+for host in zip(online_ips,host_list,vendors):
+        
+        print('{}[{}{}{}]      {}{}         {}         {}{}'.format(Color.GREEN,Color.RED,i,Color.GREEN,Color.YELLOW,host[0],host[1],host[2],Color.END))    
+        
+        i=i+1

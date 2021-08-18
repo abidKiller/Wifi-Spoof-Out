@@ -18,6 +18,7 @@ class Color:
     ORANGE = '\033[33m'
     WHITE = '\33[97m'
     END = '\033[0m'
+
 class PrintUtils:
     def __init__(self):
         self.stop_animation=False
@@ -76,7 +77,7 @@ class PrintUtils:
 
             dummy="Runnin,Please Wait!"
             cursor.hide()
-            sys.stdout.write("\r" + '{}{}'.format(Color.YELLOW,text,dummy))
+            sys.stdout.write('{}{}{}'.format(Color.YELLOW,text,dummy))
             i=0
             for i in range(len(animation)-1):
                 time.sleep(0.2)

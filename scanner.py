@@ -14,43 +14,48 @@ import errno
 
 class Scanner:
     def __init__(self):
-        pass
+        self.host_list =[]
 
-    def long2net(arg):
+    def long2net(self,arg):
         if(arg<=0 or arg>=0xFFFFFFFF):
-            raise 32-int(math.log(0xFFFFFFFF-arg,2))
+            raise ValueError("illegal Network Mask: ",hex(arg))
+         
+        return 32-int(round(math.log(0xFFFFFFFF-arg,2)))
         
     def CIDR_notation(self,bytes_address,bytes_mask):
-        network= scapy.utils.itoa(bytes_address,bytes_mask)
+        network= scapy.utils.ltoa(bytes_address)
         net_mask=self.long2net(bytes_mask)
-        net="%s%s"%(network,net_mask)
+        net="%s/%s"%(network,net_mask)
 
-        if network<16:
+        if net_mask< 16:
             return None
-        
+       
         return net
     
-    def get_Neighbors_mac_ip(self,net,interface,timeout=1):
-        host_list=[]
+
+    def get_neighbors_mac_ip(self,net,interface,timeout=1):
+        self.host_list=[]
         try:
-            ans,uans=scapy.layers.l2.arping(net,interface,timeout=timeout,verbose=False)
+            ans,uans=scapy.layers.l2.arping(net,iface=interface,timeout=timeout,verbose=False)
 
             for s,r in ans.res:
                 mac=r.sprintf("%Ether.src%")
                 ip=r.sprintf("%ARP.psrc%")
                 line =r.sprintf("%Ether.src% %ARP.psrc%")
-                host_list.append([ip,mac])
+                self.host_list.append([ip,mac])
 
                 try:
-                    hostname=socket.getmacbyip(r.psrc)
+                    hostname=socket.gethostbyaddr(r.psrc)
                     line+=','+hostname[0]
                 except socket.error as e:
-                    print("problem getting hostname")
+                    pass
 
 
         except socket.error as e:
             if e.errno == errno.EPERM:
                 exit()
+            
+        return self.host_list
 
     
     def scan_neighbours(self):
@@ -69,13 +74,15 @@ class Scanner:
                 continue
 
             net = self.CIDR_notation(network, netmask)
+           
 
             if interface != scapy.config.conf.iface:
                 # see http://trac.secdev.org/scapy/ticket/537
                 continue
 
             if net:
-                return self.scan_neighbours_mac_ip(net, interface)
+                return self.get_neighbors_mac_ip(net, interface)
 
 if __name__ == '__main__':
-    pass
+    s=Scanner()
+    print(s.scan_neighbours())
