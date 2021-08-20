@@ -13,10 +13,10 @@ import getopt
 import sys
 from scapy.all import *
 from scapy.all import ICMP,IP,ARP,Ether
-from printUtils import Color
-'''
-logger = logging.getLogger(__name__)
+from printUtils import PrintUtils
 
+logger = logging.getLogger(__name__)
+'''
 
 def long2net(arg):
     if (arg <= 0 or arg >= 0xFFFFFFFF):
@@ -154,7 +154,7 @@ def getGatewayIP():
         gatewayIP = input(header)
         return gatewayIP
 print(getGatewayIP())
-'''
+
 online_ips=['192.184.24.4']
 host_list=['MM:MM:MM:SS:SS:SS']
 vendors = ['samsung r&d mobiles']
@@ -166,3 +166,34 @@ for host in zip(online_ips,host_list,vendors):
         print('{}[{}{}{}]      {}{}         {}         {}{}'.format(Color.GREEN,Color.RED,i,Color.GREEN,Color.YELLOW,host[0],host[1],host[2],Color.END))    
         
         i=i+1
+
+
+
+from network import Network
+
+net=Network()
+print(net.get_online_IPs())
+
+'''
+#PrintUtils.scanning_animation(PrintUtils,'hello')
+
+import threading
+from time import sleep
+import printUtils
+
+stop_stopnimation=False
+l=PrintUtils()
+
+stop="run"
+thread=threading.Thread(target=l.scanning_animation, args=('hell',stop))
+thread.daemon=True
+thread.start()
+
+
+for i in range (5):
+    
+    sleep(2)
+    print("in main ")
+printUtils.stop_animation=True
+
+thread.join()

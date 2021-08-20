@@ -1,4 +1,5 @@
 import logging
+from time import sleep
 from scapy.fields import ThreeBytesField 
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 import scapy.all
@@ -15,6 +16,7 @@ import errno
 class Scanner:
     def __init__(self):
         self.host_list =[]
+        self.hostname = None
 
     def long2net(self,arg):
         if(arg<=0 or arg>=0xFFFFFFFF):
@@ -37,6 +39,8 @@ class Scanner:
         self.host_list=[]
         try:
             ans,uans=scapy.layers.l2.arping(net,iface=interface,timeout=timeout,verbose=False)
+            sleep(2)
+            
 
             for s,r in ans.res:
                 mac=r.sprintf("%Ether.src%")
@@ -45,11 +49,11 @@ class Scanner:
                 self.host_list.append([ip,mac])
 
                 try:
-                    hostname=socket.gethostbyaddr(r.psrc)
-                    line+=','+hostname[0]
+                    self.hostname=socket.gethostbyaddr(r.psrc)
+                
                 except socket.error as e:
                     pass
-
+            
 
         except socket.error as e:
             if e.errno == errno.EPERM:
@@ -60,7 +64,7 @@ class Scanner:
     
     def scan_neighbours(self):
         for network, netmask, _, interface, address, _ in scapy.config.conf.route.routes:
-
+            
             # skip loopback network and default gw
             if network == 0 or interface == 'lo' or address == '127.0.0.1' or address == '0.0.0.0':
                 continue
@@ -74,7 +78,7 @@ class Scanner:
                 continue
 
             net = self.CIDR_notation(network, netmask)
-           
+           # print(net, netmask, interface, address)
 
             if interface != scapy.config.conf.iface:
                 # see http://trac.secdev.org/scapy/ticket/537
@@ -85,4 +89,5 @@ class Scanner:
 
 if __name__ == '__main__':
     s=Scanner()
+    #s.scan_neighbours()
     print(s.scan_neighbours())

@@ -12,29 +12,26 @@ class Network:
         self.online_IPs=None
         self.default_interface=self.get_default_interface()
         self.default_gateway_IP= self.get_gateway_IP()
-        self.default_getway_mac_set=None
         self.default_interface_mac=self.get_default_interface_mac()
-        scanner=Scanner()
-        self.host_list=None
-        self.vendors=None
+        self.default_gateway_mac_set=False
+        self.scanner=Scanner()
+        self.host_list=[]
+        self.vendors=[]
 
     def resolve_mac(self):
-        try:
+       
             # send request to macvendors.co
-            for host in self.host_list: 
-                url = "http://macvendors.co/api/vendorname/"
-                request = Request(url +self.host_list[1], headers={'User-Agent': "API Browser"})
-                response = urlopen(request)
-                vendor = response.read()
-                vendor = vendor.decode("utf-8")
-                vendor = vendor[:25]
-                self.vendors.append(vendor)
-            return self.vendors
+        for host in self.host_list: 
+            url = "http://macvendors.co/api/vendorname/"
+            request = Request(url+host[1], headers={'User-Agent': "API Browser"})
+            response = urlopen(request)
+            vendor = response.read()
+            vendor = vendor.decode("utf-8")
+            vendor = vendor[:25]
+            self.vendors.append(vendor)
+        return self.vendors
 
-        except KeyboardInterrupt:
-            exit()
-        except:
-            return "N/A"
+        
     def check_internet(self):
         try:
             urlopen('https://github.com',timeout=3)
@@ -92,17 +89,22 @@ class Network:
         if not self.default_gateway_mac_set:
             self.default_getway_mac_set=""
         
+        self.host_list=Scanner.scan_neighbours(self.scanner)
         self.online_IPs=[]
+        self.resolve_mac()
+       
         for host in self.host_list:
             self.online_IPs.append(host[0])
             if not self.default_gateway_mac_set:
-                if host[0] == self.default_gateway_IPs:
+                if host[0] == self.default_gateway_IP:
                     self.default_gateway_mac=host[1]
         if not self.default_gateway_mac_set and self.default_gateway_mac==0:
             print('\n{}ERROR :{}Could not Obtain {}gateway MAC address \n'.format(Color.RED,Color.YELLOW,Color.BLUE))
             print('{}ENTER MANUALLY ({}e.g. MM:MM:MM:SS:SS:SS): \r'.format(Color.YELLOW,Color.GREEN))
             self.default_gateway_mac=input()
             self.default_gateway_mac_set=True
+        print(self.online_IPs)
+        return self.host_list
                     
 if __name__ == '__main__':
     net=Network()
