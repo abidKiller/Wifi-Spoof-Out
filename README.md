@@ -29,7 +29,7 @@ python wifiSpoofOut.py
 
 Copyright (c) 2020-2021 by [Abid Ahsan Samin](mailto:abidahsan@iut-dhaka.edu). Some rights reserved.
 
-Wifi-Spoof-Out is under the terms of the [MIT License](https://www.tldrlegal.com/l/mit), following all clarifications stated in the [license file]().
+Wifi-Spoof-Out is under the terms of the [MIT License](https://www.tldrlegal.com/l/mit), following all clarifications stated in the [license file](https://github.com/abidKiller/Wifi-Spoof-Out/blob/main/LICENSE).
 
 
 
