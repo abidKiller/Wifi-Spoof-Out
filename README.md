@@ -3,11 +3,11 @@
 Remove Unawanted devices from your wifi network using the concept of ARP-SPOOFING
 
 # Screenshots
-<img src="https://github.com/abidKiller/Wifi-Spoof-Out/blob/main/doc/main.JPG" alt="drawing" width="800"/>
-<img src="https://github.com/abidKiller/Wifi-Spoof-Out/blob/main/doc/onespoof.JPG" alt="drawing" width="800"/>
+<img src="https://github.com/abidKiller/Wifi-Spoof-Out/blob/main/doc/main.JPG" alt="drawing" width="600"/>
+<img src="https://github.com/abidKiller/Wifi-Spoof-Out/blob/main/doc/onespoof.JPG" alt="drawing" width="600"/>
 
 # THEORY
-<img src="https://github.com/abidKiller/Wifi-Spoof-Out/blob/main/doc/arp-spoofing-diagram.png" alt="drawing" width="800"/>
+<img src="https://github.com/abidKiller/Wifi-Spoof-Out/blob/main/doc/arp-spoofing-diagram.png" alt="drawing" width="600"/>
 
 1. At first Node 1 gets mac address of neighbour Nodes
 2. Then sends Arp packets to target to believe that Node 1's mac address is router's mac address .
